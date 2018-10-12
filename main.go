@@ -30,6 +30,7 @@ type Firewall struct {
 	IP6Tables *iptables.IPTables
 	V4        bool
 	V6        bool
+	IFace     string
 }
 
 // Setup the firewall
