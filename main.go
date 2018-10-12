@@ -251,6 +251,13 @@ func main() {
 	app := cli.NewApp()
 	app.Name = "geowall"
 	app.EnableBashCompletion = true
+	app.Authors = []cli.Author{
+		cli.Author{
+			Name:  "Matt Spurrier",
+			Email: "matthew@spurrier.com.au",
+		},
+	}
+	app.Copyright = "(c) 2018 Matt Spurrier"
 	app.Usage = "GeoIP Based Firewall"
 
 	app.Flags = []cli.Flag{
