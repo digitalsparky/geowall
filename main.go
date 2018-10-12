@@ -251,7 +251,7 @@ func init() {
 func main() {
 	app := cli.NewApp()
 	app.Name = "geowall"
-	app.Version = "0.0.1"
+	app.Version = "0.0.2"
 	app.EnableBashCompletion = true
 	app.Authors = []cli.Author{
 		cli.Author{
