@@ -76,8 +76,8 @@ func (f *Firewall) check(err error) {
 func (f *Firewall) InitFirewall() {
 	if f.V4 {
 		f.check(f.IPTables.NewChain(f.Table, f.Chain))
-		if a, _ := f.IPTables.Exists(f.Table, "INPUT", "-m", "state", "--state", "NEW", "-j", f.Chain); !a {
-			f.check(f.IPTables.Insert(f.Table, "INPUT", 1, "-m", "state", "--state", "NEW", "-j", f.Chain))
+		if a, _ := f.IPTables.Exists(f.Table, "INPUT", "-i", f.IFace, "-m", "state", "--state", "NEW", "-j", f.Chain); !a {
+			f.check(f.IPTables.Insert(f.Table, "INPUT", 1, "-i", f.IFace, "-m", "state", "--state", "NEW", "-j", f.Chain))
 		}
 		if f.Mode == "allow" {
 			f.check(f.IPTables.Append(f.Table, f.Chain, "-j", "DROP"))
@@ -87,8 +87,8 @@ func (f *Firewall) InitFirewall() {
 	}
 	if f.V6 {
 		f.check(f.IP6Tables.NewChain(f.Table, f.Chain))
-		if a, _ := f.IP6Tables.Exists(f.Table, "INPUT", "-m", "state", "--state", "NEW", "-j", f.Chain); !a {
-			f.check(f.IP6Tables.Insert(f.Table, "INPUT", 1, "-m", "state", "--state", "NEW", "-j", f.Chain))
+		if a, _ := f.IP6Tables.Exists(f.Table, "INPUT", "-i", f.IFace, "-m", "state", "--state", "NEW", "-j", f.Chain); !a {
+			f.check(f.IP6Tables.Insert(f.Table, "INPUT", 1, "-i", f.IFace, "-m", "state", "--state", "NEW", "-j", f.Chain))
 		}
 		if f.Mode == "allow" {
 			f.check(f.IP6Tables.Append(f.Table, f.Chain, "-j", "DROP"))
@@ -113,16 +113,16 @@ func (f *Firewall) UnloadFirewall() {
 	if f.V4 {
 		// Remove the IPv4 pre-process rule
 		fmt.Println("Unloading IPv4 Rules")
-		if a, _ := f.IPTables.Exists(f.Table, "INPUT", "-m", "state", "--state", "NEW", "-j", f.Chain); a {
-			f.check(f.IPTables.Delete(f.Table, "INPUT", "-m", "state", "--state", "NEW", "-j", f.Chain))
+		if a, _ := f.IPTables.Exists(f.Table, "INPUT", "-i", f.IFace, "-m", "state", "--state", "NEW", "-j", f.Chain); a {
+			f.check(f.IPTables.Delete(f.Table, "INPUT", "-i", f.IFace, "-m", "state", "--state", "NEW", "-j", f.Chain))
 		}
 	}
 
 	if f.V6 {
 		// Remove the IPv6 pre-process rule
 		fmt.Println("Unloading IPv6 Rules")
-		if a, _ := f.IP6Tables.Exists(f.Table, "INPUT", "-m", "state", "--state", "NEW", "-j", f.Chain); a {
-			f.check(f.IP6Tables.Delete(f.Table, "INPUT", "-m", "state", "--state", "NEW", "-j", f.Chain))
+		if a, _ := f.IP6Tables.Exists(f.Table, "INPUT", "-i", f.IFace, "-m", "state", "--state", "NEW", "-j", f.Chain); a {
+			f.check(f.IP6Tables.Delete(f.Table, "INPUT", "-i", f.IFace, "-m", "state", "--state", "NEW", "-j", f.Chain))
 		}
 	}
 	// Drop the chains
@@ -250,6 +250,7 @@ func init() {
 func main() {
 	app := cli.NewApp()
 	app.Name = "geowall"
+	app.Version = "0.0.1"
 	app.EnableBashCompletion = true
 	app.Authors = []cli.Author{
 		cli.Author{
@@ -270,6 +271,11 @@ func main() {
 			Name:        "v6, 6, ipv6",
 			Usage:       "Include IPv6 Rules",
 			Destination: &fw.V6,
+		},
+		cli.StringFlag{
+			Name:        "iface, i",
+			Usage:       "Inbound Interface",
+			Destination: &fw.IFace,
 		},
 	}
 
@@ -299,6 +305,9 @@ func main() {
 				}
 				if !fw.V4 && !fw.V6 {
 					return errors.New("Both V4 and V6 disabled, nothing to do")
+				}
+				if fw.IFace == "" {
+					return errors.New("Inbound interface not defined!")
 				}
 
 				fmt.Println("Initiating Firewall")
@@ -339,6 +348,9 @@ func main() {
 			Action: func(c *cli.Context) error {
 				if !fw.V4 && !fw.V6 {
 					return errors.New("Both V4 and V6 disabled, nothing to do")
+				}
+				if fw.IFace == "" {
+					return errors.New("Inbound interface not defined!")
 				}
 
 				fw.UnloadFirewall()
