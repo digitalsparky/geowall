@@ -1,0 +1,22 @@
+before_deploy:
+- "./upx -qq --brute /tmp/geowall-$BUILDOS-$BUILDARCH.$FILEEXT"
+deploy:
+  provider: releases
+  api_key:
+    secure: q225vNPHMiGIB2U7w3uEjG9Cm5IOzrlAxDjZw0shZlqlrSnHS7H+Q6AtAvWqNx8rJmHsa1I09iDcL9JVHH2uJvWNP/Q7s+/GUOpaJhEAZOKPXwHdL8pKmFsYUWth2L2bmcFmcN7Zlnd5vKg8f130IXKx0qQzTVLMCobQ2Njl+QhJHn9Rz/FV6VpGscFKThLgLY02XgLgk0aeWUtqiVc2m7V9EMtvLvFw70PUFLpugAVWVe2GUcBwwRUUfLSqC34Xdv9Iy6TaFIl3J5ZQb77NqYEuCHqnKl9UCaLp8YgzU3ukiXie1KfSTvkRY1sPK2382YaIS985oywy3/ETloG/IXz43XqSoj5sDiXVUOd8zyZpiFvXPs0pXGWUWCSiInVma/szW+sNO8ZKV9f7SOsaKhzrV+36K1/Xd0JzOI9KPCrkHwiGAywUr5aDb1Vn4Ufe2sB4BWbOeQHZ7CuwbbnbD8Pci9iQUytQ4rZlniAVUMUDaaIFrniQAcwSriv8WA8hqPRCpHcVzMt+ujvvZnl1bBvU8QMFoaVK1hPPMia8UdzEf52U5BA7gffOIHyBUAUHApnqvLPOSWrJmADTwu1evHhUFanWgn923eFlgBQkNcnA2vJCuNQ5PgxAlQprLJptINAVcaHpqdQAeVWbIko3Tv+qQqe8YQ4eoW2/SNwsjF4=
+  file: /tmp/geowall-*.bin
+  file_glob: true
+  skip_cleanup: true
+  on:
+    repo: digitalsparky/geowall
+    tags: true
+  sudo: false
+language: go
+go:
+- 1.12.x
+matrix:
+  include:
+  - env: BUILDOS="linux" BUILDARCH="amd64" FILEEXT="bin"
+  - env: BUILDOS="linux" BUILDARCH="386" FILEEXT="bin"
+script:
+- GO111MODULE="on" GOOS=$BUILDOS GOARCH=$BUILDARCH go build -ldflags "-s -w" -o /tmp/geowall-$BUILDOS-$BUILDARCH.$FILEEXT

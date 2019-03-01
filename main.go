@@ -288,7 +288,6 @@ func init() {
 func main() {
 	app := cli.NewApp()
 	app.Name = "geowall"
-	app.Version = "0.0.3"
 	app.EnableBashCompletion = true
 	app.Authors = []cli.Author{
 		cli.Author{
@@ -298,6 +297,16 @@ func main() {
 	}
 	app.Copyright = "(c) 2019 Matt Spurrier"
 	app.Usage = "GeoIP Based Firewall"
+
+	if (os.Getenv("CI") == "true") && (os.Getenv("TRAVIS") == "true") {
+		if os.Getenv("TRAVIS_TAG") != "" {
+			app.Version = os.Getenv("TRAVIS_COMMIT")
+		} else {
+			app.Version = os.Getenv("TRAVIS_TAG")
+		}
+	} else {
+		app.Version = "development"
+	}
 
 	app.Flags = []cli.Flag{
 		cli.BoolFlag{
