@@ -31,6 +31,7 @@ type Firewall struct {
 	V4        bool
 	V6        bool
 	IFace     string
+	Save      bool
 }
 
 // Setup the firewall
@@ -134,6 +135,42 @@ func (f *Firewall) UnloadFirewall() {
 	}
 	if f.V6 {
 		f.check(f.IP6Tables.DeleteChain(f.Table, f.Chain))
+	}
+}
+
+func (f *Firewall) WriteV4() {
+	cmd := exec.Command("iptables-save")
+	outfile, err := os.Create("/etc/iptables/rules.v4")
+	if err != nil {
+		panic(err)
+	}
+	defer outfile.Close()
+	cmd.Stdout = outfile
+	if err := cmd.Run(); err != nil {
+		panic(err)
+	}
+}
+
+func (f *Firewall) WriteV6() {
+	cmd := exec.Command("ip6tables-save")
+	outfile, err := os.Create("/etc/iptables/rules.v6")
+	if err != nil {
+		panic(err)
+	}
+	defer outfile.Close()
+	cmd.Stdout = outfile
+	if err := cmd.Run(); err != nil {
+		panic(err)
+	}
+}
+
+// Save the firewall rules
+func (f *Firewall) SaveFirewall() {
+	if f.V4 {
+		f.WriteV4()
+	}
+	if f.V6 {
+		f.WriteV6()
 	}
 }
 
@@ -251,7 +288,7 @@ func init() {
 func main() {
 	app := cli.NewApp()
 	app.Name = "geowall"
-	app.Version = "0.0.2"
+	app.Version = "0.0.3"
 	app.EnableBashCompletion = true
 	app.Authors = []cli.Author{
 		cli.Author{
@@ -259,7 +296,7 @@ func main() {
 			Email: "matthew@spurrier.com.au",
 		},
 	}
-	app.Copyright = "(c) 2018 Matt Spurrier"
+	app.Copyright = "(c) 2019 Matt Spurrier"
 	app.Usage = "GeoIP Based Firewall"
 
 	app.Flags = []cli.Flag{
@@ -277,6 +314,11 @@ func main() {
 			Name:        "iface, i",
 			Usage:       "Inbound Interface",
 			Destination: &fw.IFace,
+		},
+		cli.BoolFlag{
+			Name:        "save, s",
+			Usage:       "Save IPTables Rules",
+			Destination: &fw.Save,
 		},
 	}
 
@@ -316,7 +358,11 @@ func main() {
 
 				fw.ProcessRules()
 				fmt.Println("Update complete")
-				fmt.Println("Make sure you save your IPtables Rules with iptables-save if you wish to keep them.")
+
+				if fw.Save {
+					fw.SaveFirewall()
+					fmt.Println("IPTables rules have been saved.")
+				}
 				return nil
 			},
 		},
@@ -339,7 +385,11 @@ func main() {
 				fw.ClearFirewall()
 				fw.ProcessRules()
 				fmt.Println("Update complete")
-				fmt.Println("Make sure you save your IPtables Rules with iptables-save if you wish to keep them.")
+
+				if fw.Save {
+					fw.SaveFirewall()
+					fmt.Println("IPTables rules have been saved.")
+				}
 				return nil
 			},
 		},
@@ -356,6 +406,11 @@ func main() {
 
 				fw.UnloadFirewall()
 				fmt.Println("Firewall Unloaded")
+
+				if fw.Save {
+					fw.SaveFirewall()
+					fmt.Println("IPTables rules have been saved.")
+				}
 				return nil
 			},
 		},
