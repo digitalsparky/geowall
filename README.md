@@ -1,4 +1,4 @@
-# GEOWall
+# GEOWall [![Build Status](https://travis-ci.org/digitalsparky/geowall.svg?branch=master)](https://travis-ci.org/digitalsparky/geowall)
 
 Downloaded and updates IPtables based on Geo IP lists and country.
 
@@ -18,7 +18,7 @@ USAGE:
    main [global options] command [command options] [arguments...]
 
 VERSION:
-   0.0.3
+   1.0.0
 
 AUTHOR:
    Matt Spurrier <matthew@spurrier.com.au>
