@@ -299,7 +299,7 @@ func main() {
 	app.Usage = "GeoIP Based Firewall"
 
 	if os.Getenv("TRAVIS_TAG") == "" {
-		app.Version = "os.Getenv("TRAVIS_COMMIT")"
+		app.Version = os.Getenv("TRAVIS_COMMIT")
 	} else {
 		app.Version = os.Getenv("TRAVIS_TAG")
 	}
