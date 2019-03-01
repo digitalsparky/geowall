@@ -19,6 +19,8 @@ import (
 var V4URL string = "http://www.ipdeny.com/ipblocks/data/aggregated/%s-aggregated.zone"
 var V6URL string = "http://www.ipdeny.com/ipv6/ipaddresses/aggregated/%s-aggregated.zone"
 
+var Version string
+
 var fw *Firewall
 
 type Firewall struct {
@@ -297,12 +299,7 @@ func main() {
 	}
 	app.Copyright = "(c) 2019 Matt Spurrier"
 	app.Usage = "GeoIP Based Firewall"
-
-	if os.Getenv("TRAVIS_TAG") == "" {
-		app.Version = os.Getenv("TRAVIS_COMMIT")
-	} else {
-		app.Version = os.Getenv("TRAVIS_TAG")
-	}
+	app.Version = Version
 
 	app.Flags = []cli.Flag{
 		cli.BoolFlag{
