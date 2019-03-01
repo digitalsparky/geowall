@@ -298,8 +298,8 @@ func main() {
 	app.Copyright = "(c) 2019 Matt Spurrier"
 	app.Usage = "GeoIP Based Firewall"
 
-	if os.Getenv("TRAVIS_TAG") != "" {
-		app.Version = os.Getenv("TRAVIS_COMMIT")
+	if os.Getenv("TRAVIS_TAG") == "" {
+		app.Version = "os.Getenv("TRAVIS_COMMIT")"
 	} else {
 		app.Version = os.Getenv("TRAVIS_TAG")
 	}
