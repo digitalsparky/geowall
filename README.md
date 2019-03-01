@@ -1,4 +1,3 @@
-
 # GEOWall
 
 Downloaded and updates IPtables based on Geo IP lists and country.
@@ -10,6 +9,37 @@ IP block rules from:
 - IPv6: http://www.ipdeny.com/ipv6/ipaddresses/aggregated/
 
 Simply match the 'country code' to the country characters at the start of the {countrycode}-aggredated.zone file
+
+```
+NAME:
+   geowall - GeoIP Based Firewall
+
+USAGE:
+   main [global options] command [command options] [arguments...]
+
+VERSION:
+   0.0.3
+
+AUTHOR:
+   Matt Spurrier <matthew@spurrier.com.au>
+
+COMMANDS:
+     start
+     update
+     stop
+     help, h  Shows a list of commands or help for one command
+
+GLOBAL OPTIONS:
+   --v4, -4, --ipv4         Include IPv4 Rules
+   --v6, -6, --ipv6         Include IPv6 Rules
+   --iface value, -i value  Inbound Interface
+   --save, -s               Save IPTables Rules
+   --help, -h               show help
+   --version, -v            print the version
+
+COPYRIGHT:
+   (c) 2019 Matt Spurrier
+```
 
 For example, to only allow AU IP's to the server on eth0 and block everything else, use:
 
@@ -43,6 +73,12 @@ To update rules for IPv4 to use AU and NZ use - this will clear existing rules a
 
 ```
 geowall -4 update -c au,nz
+```
+
+To allow only AU and NZ IP's and block everything else on both IPv4 and IPv6 and save the rules use:
+
+```
+geowall -4 -6 -i eth0 start -c au,nz -m allow -s
 ```
 
 To build this application:
