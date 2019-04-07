@@ -17,16 +17,12 @@ NAME:
 USAGE:
    main [global options] command [command options] [arguments...]
 
-VERSION:
-   1.0.0
-
 AUTHOR:
    Matt Spurrier <matthew@spurrier.com.au>
 
 COMMANDS:
-     start
-     update
-     stop
+     apply
+     unload
      help, h  Shows a list of commands or help for one command
 
 GLOBAL OPTIONS:
@@ -44,7 +40,7 @@ COPYRIGHT:
 For example, to only allow AU IP's to the server on eth0 and block everything else, use:
 
 ```
-geowall -4 -6 -i eth0 start -c au -m allow
+geowall -4 -6 -i eth0 apply -c au -m allow
 ```
 
 This will download and process:
@@ -54,31 +50,31 @@ http://www.ipdeny.com/ipv6/ipaddresses/aggregated/au-aggregated.zone to IP6Table
 To unload IPv4 and IPv6 rules on eth0 run:
 
 ```
-geowall -4 -6 -i eth0 stop
+geowall -4 -6 -i eth0 unload
 ```
 
 To allow only AU and NZ IP's and block everything else on both IPv4 and IPv6, use:
 
 ```
-geowall -4 -6 -i eth0 start -c au,nz -m allow
+geowall -4 -6 -i eth0 apply -c au,nz -m allow
 ```
 
 To block a specific country on both IPv4 and IPv6, use:
 
 ```
-geowall -4 -6 -i eth0 start -c {countrycode} -m deny
+geowall -4 -6 -i eth0 apply -c {countrycode} -m deny
 ```
 
 To update rules for IPv4 to use AU and NZ use - this will clear existing rules and replace with AU and NZ:
 
 ```
-geowall -4 update -c au,nz
+geowall -4 -i eth0 apply -c au,nz
 ```
 
 To allow only AU and NZ IP's and block everything else on both IPv4 and IPv6 and save the rules use:
 
 ```
-geowall -4 -6 -i eth0 start -c au,nz -m allow -s
+geowall -4 -6 -i eth0 -s apply -c au,nz -m allow
 ```
 
 To build this application:
