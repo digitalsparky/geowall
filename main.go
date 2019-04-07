@@ -116,7 +116,6 @@ func (f *Firewall) ClearFirewall() {
 func (f *Firewall) UnloadFirewall() {
 	if f.V4 {
 		// Remove the IPv4 pre-process rule
-		fmt.Println("Unloading IPv4 Rules")
 		if a, _ := f.IPTables.Exists(f.Table, "INPUT", "-i", f.IFace, "-m", "state", "--state", "NEW", "-j", f.Chain); a {
 			f.check(f.IPTables.Delete(f.Table, "INPUT", "-i", f.IFace, "-m", "state", "--state", "NEW", "-j", f.Chain))
 		}
@@ -124,7 +123,6 @@ func (f *Firewall) UnloadFirewall() {
 
 	if f.V6 {
 		// Remove the IPv6 pre-process rule
-		fmt.Println("Unloading IPv6 Rules")
 		if a, _ := f.IP6Tables.Exists(f.Table, "INPUT", "-i", f.IFace, "-m", "state", "--state", "NEW", "-j", f.Chain); a {
 			f.check(f.IP6Tables.Delete(f.Table, "INPUT", "-i", f.IFace, "-m", "state", "--state", "NEW", "-j", f.Chain))
 		}
@@ -326,7 +324,7 @@ func main() {
 
 	app.Commands = []cli.Command{
 		cli.Command{
-			Name: "start",
+			Name: "apply",
 			Flags: []cli.Flag{
 				cli.StringFlag{
 					Name:        "countries, c",
@@ -355,11 +353,16 @@ func main() {
 					return errors.New("Inbound interface not defined!")
 				}
 
+				fmt.Println("Clearing existing rules")
+				fw.UnloadFirewall()
+
 				fmt.Println("Initiating Firewall")
 				fw.InitFirewall()
 
+				fmt.Println("Processing Rules")
 				fw.ProcessRules()
-				fmt.Println("Update complete")
+
+				fmt.Println("Complete")
 
 				if fw.Save {
 					fw.SaveFirewall()
@@ -370,34 +373,7 @@ func main() {
 		},
 
 		cli.Command{
-			Name: "update",
-			Flags: []cli.Flag{
-				cli.StringFlag{
-					Name:        "countries, c",
-					Usage:       "Comma delimited list of countries the mode will run actions on",
-					EnvVar:      "GEOWALL_COUNTRIES",
-					Destination: &fw.Countries,
-				},
-			},
-			Action: func(c *cli.Context) error {
-				if fw.Countries == "" {
-					return errors.New("countries must be listed")
-				}
-				fmt.Println("Clearing old rules")
-				fw.ClearFirewall()
-				fw.ProcessRules()
-				fmt.Println("Update complete")
-
-				if fw.Save {
-					fw.SaveFirewall()
-					fmt.Println("IPTables rules have been saved.")
-				}
-				return nil
-			},
-		},
-
-		cli.Command{
-			Name: "stop",
+			Name: "unload",
 			Action: func(c *cli.Context) error {
 				if !fw.V4 && !fw.V6 {
 					return errors.New("Both V4 and V6 disabled, nothing to do")
