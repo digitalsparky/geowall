@@ -13,10 +13,9 @@ deploy:
   sudo: false
 language: go
 go:
-- 1.12.x
+- 1.13.x
 matrix:
   include:
   - env: BUILDOS="linux" BUILDARCH="amd64" FILEEXT="bin"
-  - env: BUILDOS="linux" BUILDARCH="386" FILEEXT="bin"
 script:
 - GO111MODULE="on" GOOS=$BUILDOS GOARCH=$BUILDARCH go build -ldflags "-s -w -X main.Version=$TRAVIS_TAG" -o /tmp/geowall-$BUILDOS-$BUILDARCH.$FILEEXT
