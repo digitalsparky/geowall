@@ -1,0 +1,23 @@
+before_deploy:
+- "curl -o upx.tgz https://github.com/upx/upx/releases/download/v3.96/upx-3.96-amd64_linux.tar.xz"
+- "tar -xvf upx.tgz upx"
+- "./upx -qq --brute /tmp/geowall-$BUILDOS-$BUILDARCH.$FILEEXT"
+deploy:
+  provider: releases
+  api_key:
+    secure: cDSpUaDQa9JOhhwLQ5PW31+uQbAZUZl412i1ip9RslIUQVFU3bGswVuKvcvsnmjj2Jke1anhMlcNvg6KZb1h5a52ouovraCMokFyYUx0JUV4d/Ol4KCTAG9ljalkOpgE2zRr2YRVeZp48b0/tws/ozcMh7k+rwErHXYepdZWQ75wI0GOv7LihS/MEOB2cHMTHYqNtEk3WX7ZK8xsalY0bNbrMGnQFGMXuRfVIVYTHDUfIuqua3qV+fhEevAmbIEUVM6YicO891AFAxTCXvg/R0aaki3PZVqel5Teza8zg7zjpZ774/WHHCwuokkhAH6Y1GbMNkarJ413vBvdV4QaPHKP5DCx6qYEw29VLS440uHfjFPtNiQIoG+n1H4T1sQGHSDi7/+s4Nvy6UOb+Ni9MK6G+hzEzevXhncQr1Y81GDroJBVwba7gnsKakjvFlo4BqaRaam7DpxHIkYkGTt1VA7r1talfHdqRz7XRxmyOpHeSRboi5Q0OI63f+wUrYQ8x6DtC69epLE4zSPdI96cbZeRZ4CJauDl17zmAunpOEjvAQg6N66+k8/o058eUSHQATNewA1ZM8O8ybhSIN1sSxY+GHiZxL48LvVtaTSI6xdU6359olO9BiwINYiHCQZckADruxMzHVbYHmstJkYBhz/F34pkuPm8eaOHLZ/rT1I=
+  file: /tmp/geowall-*.bin
+  file_glob: true
+  skip_cleanup: true
+  on:
+    repo: digitalsparky/geowall
+    tags: true
+  sudo: false
+language: go
+go:
+- 1.16.x
+matrix:
+  include:
+  - env: BUILDOS="linux" BUILDARCH="amd64" FILEEXT="bin"
+script:
+- GO111MODULE="on" GOOS=$BUILDOS GOARCH=$BUILDARCH go build -ldflags "-s -w -X main.Version=$TRAVIS_TAG" -o /tmp/geowall-$BUILDOS-$BUILDARCH.$FILEEXT
