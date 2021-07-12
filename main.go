@@ -295,7 +295,7 @@ func main() {
 			Email: "matthew@spurrier.com.au",
 		},
 	}
-	app.Copyright = "(c) 2019 Matt Spurrier"
+	app.Copyright = "(c) 2021 Matt Spurrier"
 	app.Usage = "GeoIP Based Firewall"
 	app.Version = Version
 
