@@ -1,4 +1,4 @@
-# GEOWall [![Build Status](https://travis-ci.org/digitalsparky/geowall.svg?branch=master)](https://travis-ci.org/digitalsparky/geowall)
+# GEOWall ![Build](https://github.com/github/docs/actions/workflows/release.yml/badge.svg)
 
 Downloaded and updates IPtables based on Geo IP lists and country.
 
