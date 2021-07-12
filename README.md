@@ -34,7 +34,7 @@ GLOBAL OPTIONS:
    --version, -v            print the version
 
 COPYRIGHT:
-   (c) 2019 Matt Spurrier
+   (c) 2021 Matt Spurrier
 ```
 
 For example, to only allow AU IP's to the server on eth0 and block everything else, use:
