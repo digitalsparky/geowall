@@ -19,6 +19,5 @@ jobs:
         goversion: "https://dl.google.com/go/go1.16.5.linux-amd64.tar.gz"
         project_path: "./geowall"
         binary_name: "geowall"
-		sha256sum: true
         ldflags: "-s -w -X main.Version=${RELEASE_TAG}"
         executable_compression: "upx -qq --brute"
