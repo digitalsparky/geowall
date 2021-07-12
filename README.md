@@ -1,4 +1,4 @@
-# GEOWall ![Build](https://github.com/digitalsparky/geowall/actions/workflows/release.yaml/badge.svg)
+# GEOWall [!Build](https://github.com/digitalsparky/geowall/actions/workflows/main.yml/badge.svg?event=release)](https://github.com/digitalsparky/geowall/actions/workflows/main.yml)
 
 Downloaded and updates IPtables based on Geo IP lists and country.
 
