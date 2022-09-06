@@ -13,7 +13,7 @@ import (
 	"strings"
 
 	"github.com/coreos/go-iptables/iptables"
-	"github.com/urfave/cli"
+	""
 )
 
 var V4URL string = "http://www.ipdeny.com/ipblocks/data/aggregated/%s-aggregated.zone"
